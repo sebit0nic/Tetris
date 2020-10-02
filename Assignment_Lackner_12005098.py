@@ -11,15 +11,16 @@ class Block:
     blocknames = ['clevelandZ', 'rhodeIslandZ', 'blueRicky', 'smashBoy', 'orangeRicky', 'teewee', 'hero']
 
     def __init__(self, game, block_name):
-        self.name = None  # TODO set name / Can be 'hero', 'teewee', ...
-        self.rotation = 0  # TODO randomize rotation (e.g. 0, 1, 2, 3; Hint: different number of rotations per block)
+        self.name = block_name  # TODO set name / Can be 'hero', 'teewee', ...
+        self.rotation = 1  # TODO randomize rotation (e.g. 0, 1, 2, 3; Hint: different number of rotations per block)
         self.set_shape(game.block_list[self.name][self.rotation])
         self.x = int(game.board_width / 2) - int(self.width / 2)
         self.y = 0
-        self.color = None  # TODO Set Color correctly / Can be 'red', 'green', ... (see self.blockColors)
+        self.color = game.block_colors[block_name]  # TODO Set Color correctly / Can be 'red', 'green', ... (see self.blockColors)
 
     def set_shape(self, shape):
         self.shape = shape
+        # Hier weitermachen !!!
         self.width = 0  # TODO Calculate the correct width
         self.height = 0  # TODO Calculate the correct height
 
@@ -95,7 +96,7 @@ class Game(BaseGame):
     # Returns the newly created Block Class
     def get_new_block(self):
         # TODO make block choice random! (Use random.choice out of the list of blocks) see blocknames array
-        blockname = None
+        blockname = random.choice(Block.blocknames)
         block = Block(self, blockname)
         return block
 
@@ -129,6 +130,8 @@ class Game(BaseGame):
 #-------------------------------------------------------------------------------------
 # Do not modify the code below, your implementation should be done above
 #-------------------------------------------------------------------------------------
+
+
 def main():
     pygame.init()
     game = Game()
