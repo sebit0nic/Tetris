@@ -170,7 +170,6 @@ class BaseGame():
     # Do not modify
     # Draw a Block on Position Px and Py (top-left corner of the block)
     def draw_block(self, block, p_x=None, p_y=None):
-        print(block.width, block.height)
         if p_x == None and p_y == None:
             p_x, p_y = self.convert_coords(block.x, block.y)
         for x in range(block.width):

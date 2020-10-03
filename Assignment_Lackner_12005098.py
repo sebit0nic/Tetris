@@ -11,27 +11,35 @@ class Block:
     blocknames = ['clevelandZ', 'rhodeIslandZ', 'blueRicky', 'smashBoy', 'orangeRicky', 'teewee', 'hero']
 
     def __init__(self, game, block_name):
-        self.name = block_name  # TODO set name / Can be 'hero', 'teewee', ...
-        self.rotation = 1  # TODO randomize rotation (e.g. 0, 1, 2, 3; Hint: different number of rotations per block)
+        self.name = block_name  # DONE set name / Can be 'hero', 'teewee', ...
+        self.rotation = random.choice(range(len(game.block_list[self.name])))  # DONE randomize rotation (e.g. 0, 1, 2, 3; Hint: different number of rotations per block)
+        self.height = 0
+        self.width = 0
         self.set_shape(game.block_list[self.name][self.rotation])
         self.x = int(game.board_width / 2) - int(self.width / 2)
         self.y = 0
-        self.color = game.block_colors[block_name]  # TODO Set Color correctly / Can be 'red', 'green', ... (see self.blockColors)
+        self.color = game.block_colors[block_name]  # DONE Set Color correctly / Can be 'red', 'green', ... (see self.blockColors)
 
     def set_shape(self, shape):
         self.shape = shape
-        # Hier weitermachen !!!
-        self.width = 0  # TODO Calculate the correct width
-        self.height = 0  # TODO Calculate the correct height
+        for shape_row in shape:
+            self.height += 1  # DONE Calculate the correct height
+            if len(shape_row) > self.width:
+                self.width = len(shape_row)  # DONE Calculate the correct width
+            print(shape_row, 'Height:', self.height)
 
-    def right_rotation(self):
+        print('Total:', self.width, self.height)
+
+    def right_rotation(self, rotation_options):
         # TODO rotate block once clockwise
         pass
 
-    def left_rotation(self):
+    def left_rotation(self, rotation_options):
         # TODO rotate block once counter-clockwise
         pass
 
+    def move_downwards(self, game):
+        self.y += game.speed/5
 
 
 class Game(BaseGame):
@@ -57,6 +65,12 @@ class Game(BaseGame):
         while True:
             self.test_quit_game()
             # TODO Game Logic: implement key events & move blocks (Hint: check if move is valid/block is on the Board)
+            if self.is_block_on_valid_position(current_block, 0, self.speed/5):
+                current_block.move_downwards(self)
+            else:
+                self.add_block_to_board(current_block)
+
+            print(self.board)
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -72,13 +86,21 @@ class Game(BaseGame):
     # Check if Coordinate given is on board (returns True/False)
     def is_coordinate_on_board(self, x, y):
         # TODO check if coordinate is on playingboard (in boundary of self.boardWidth and self.boardHeight)
-        return False
+        if x < 0 or x > self.board_width:
+            return False
+        if y < 0 or y > self.board_height:
+            return False
+        return True
 
     # Parameters block, x_change (any movement done in X direction), yChange (movement in Y direction)
     # Returns True if no part of the block is outside the Board or collides with another Block
     def is_block_on_valid_position(self, block, x_change=0, y_change=0):
         # TODO check if block is on valid position after change in x or y direction
-        return False
+        if block.x + block.width + x_change < 0 or block.x + block.width + x_change > self.board_width:
+            return False
+        if block.y + block.height + y_change < 0 or block.y + block.height + y_change > self.board_height:
+            return False
+        return True
 
     # Check if the line on y Coordinate is complete
     # Returns True if the line is complete
@@ -103,7 +125,8 @@ class Game(BaseGame):
     def add_block_to_board(self, block):
         # TODO once block is not falling, place it on the gameboard
         #  add Block to the designated Location on the board once it stopped moving
-        pass
+        # Block zu self.board hinzufügen
+        self.board[int(block.y)][int(block.x)] = 'x'
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
@@ -127,9 +150,9 @@ class Game(BaseGame):
         # It starts as defined in base.py and should increase by 1 after a level up.
         pass
 
-#-------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 # Do not modify the code below, your implementation should be done above
-#-------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 
 
 def main():
