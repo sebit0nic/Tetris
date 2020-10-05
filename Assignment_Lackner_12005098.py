@@ -23,24 +23,35 @@ class Block:
         self.height = 0
         self.width = 0
         for shape_row in shape:
+            shape_column_count = 0
             self.height += 1  # DONE Calculate the correct height
-            if len(shape_row) > self.width:
-                self.width = len(shape_row)  # DONE Calculate the correct width
-
-        print('Total:', self.width, self.height)
+            for shape_column in shape_row:
+                if shape_column == 'x':
+                    shape_column_count += 1
+            if shape_column_count > self.width:
+                self.width = shape_column_count  # DONE Calculate the correct width
 
     def right_rotation(self, rotation_options):
-        # TODO rotate block once clockwise
+        # DONE rotate block once clockwise
+        self.rotation += 1
+        if self.rotation > len(rotation_options) - 1:
+            self.rotation = 0
+        self.set_shape(rotation_options[self.rotation])
         pass
 
     def left_rotation(self, rotation_options):
-        # TODO rotate block once counter-clockwise
-        self.set_shape(rotation_options)
+        # DONE rotate block once counter-clockwise
+        self.rotation -= 1
+        if self.rotation < 0:
+            self.rotation = len(rotation_options) - 1
+        self.set_shape(rotation_options[self.rotation])
         pass
 
     def move_downwards(self, game):
         self.y += game.speed/5
 
+    def move_sideways(self, direction):
+        self.x += direction
 
 class Game(BaseGame):
     def run_game(self):
@@ -68,16 +79,20 @@ class Game(BaseGame):
             current_key = self.check_key_press()
             if current_key == pygame.K_LEFT:
                 print('Left Key pressed')
+                if self.is_block_on_valid_position(current_block, -1, 0):
+                    current_block.move_sideways(-1)
             if current_key == pygame.K_RIGHT:
                 print('Right Key pressed')
+                if self.is_block_on_valid_position(current_block, 1, 0):
+                    current_block.move_sideways(1)
             if current_key == pygame.K_DOWN:
                 print('Down Key pressed')
             if current_key == pygame.K_q:
                 print('Q Key pressed')
-                current_block.left_rotation(self.block_list[current_block.name][current_block.rotation-1])
+                current_block.left_rotation(self.block_list[current_block.name])
             if current_key == pygame.K_e:
                 print('E Key pressed')
-                current_block.right_rotation(self.block_list[current_block.name][current_block.rotation+1])
+                current_block.right_rotation(self.block_list[current_block.name])
             if current_key == pygame.K_p:
                 print('P Key pressed')
                 self.set_game_speed(0)
@@ -113,7 +128,7 @@ class Game(BaseGame):
     # Returns True if no part of the block is outside the Board or collides with another Block
     def is_block_on_valid_position(self, block, x_change=0, y_change=0):
         # TODO check if block is on valid position after change in x or y direction
-        if block.x + block.width + x_change < 0 or block.x + block.width + x_change > self.board_width:
+        if block.x + x_change < 0 or block.x + block.width + x_change > self.board_width:
             return False
         if block.y + block.height + y_change < 0 or block.y + block.height + y_change > self.board_height:
             return False
