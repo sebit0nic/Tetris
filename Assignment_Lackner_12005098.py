@@ -13,8 +13,6 @@ class Block:
     def __init__(self, game, block_name):
         self.name = block_name  # DONE set name / Can be 'hero', 'teewee', ...
         self.rotation = random.choice(range(len(game.block_list[self.name])))  # DONE randomize rotation (e.g. 0, 1, 2, 3; Hint: different number of rotations per block)
-        self.height = 0
-        self.width = 0
         self.set_shape(game.block_list[self.name][self.rotation])
         self.x = int(game.board_width / 2) - int(self.width / 2)
         self.y = 0
@@ -22,11 +20,12 @@ class Block:
 
     def set_shape(self, shape):
         self.shape = shape
+        self.height = 0
+        self.width = 0
         for shape_row in shape:
             self.height += 1  # DONE Calculate the correct height
             if len(shape_row) > self.width:
                 self.width = len(shape_row)  # DONE Calculate the correct width
-            print(shape_row, 'Height:', self.height)
 
         print('Total:', self.width, self.height)
 
@@ -36,6 +35,7 @@ class Block:
 
     def left_rotation(self, rotation_options):
         # TODO rotate block once counter-clockwise
+        self.set_shape(rotation_options)
         pass
 
     def move_downwards(self, game):
@@ -65,12 +65,29 @@ class Game(BaseGame):
         while True:
             self.test_quit_game()
             # TODO Game Logic: implement key events & move blocks (Hint: check if move is valid/block is on the Board)
-            if self.is_block_on_valid_position(current_block, 0, self.speed/5):
-                current_block.move_downwards(self)
-            else:
-                self.add_block_to_board(current_block)
+            current_key = self.check_key_press()
+            if current_key == pygame.K_LEFT:
+                print('Left Key pressed')
+            if current_key == pygame.K_RIGHT:
+                print('Right Key pressed')
+            if current_key == pygame.K_DOWN:
+                print('Down Key pressed')
+            if current_key == pygame.K_q:
+                print('Q Key pressed')
+                current_block.left_rotation(self.block_list[current_block.name][current_block.rotation-1])
+            if current_key == pygame.K_e:
+                print('E Key pressed')
+                current_block.right_rotation(self.block_list[current_block.name][current_block.rotation+1])
+            if current_key == pygame.K_p:
+                print('P Key pressed')
+                self.set_game_speed(0)
 
-            print(self.board)
+            #if self.is_block_on_valid_position(current_block, 0, self.speed/5):
+            #    current_block.move_downwards(self)
+            #else:
+            #    self.add_block_to_board(current_block)
+
+            #print(self.board)
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -117,7 +134,7 @@ class Game(BaseGame):
     # Create a new random block
     # Returns the newly created Block Class
     def get_new_block(self):
-        # TODO make block choice random! (Use random.choice out of the list of blocks) see blocknames array
+        # DONE make block choice random! (Use random.choice out of the list of blocks) see blocknames array
         blockname = random.choice(Block.blocknames)
         block = Block(self, blockname)
         return block
@@ -147,7 +164,7 @@ class Game(BaseGame):
     # set the current game speed
     def set_game_speed(self, speed):
         # TODO set the correct game speed!
-        # It starts as defined in base.py and should increase by 1 after a level up.
+        self.speed = speed
         pass
 
 # -------------------------------------------------------------------------------------
