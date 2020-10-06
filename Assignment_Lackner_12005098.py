@@ -48,15 +48,17 @@ class Block:
         pass
 
     def move_downwards(self, game):
-        self.y += game.speed/5
+        self.y += 1
 
     def move_sideways(self, direction):
         self.x += direction
+
 
 class Game(BaseGame):
     def run_game(self):
         self.board = self.get_empty_board()
         fall_time = time.time()
+        paused = False
 
         current_block = self.get_new_block()
         next_block = self.get_new_block()
@@ -77,32 +79,38 @@ class Game(BaseGame):
             self.test_quit_game()
             # TODO Game Logic: implement key events & move blocks (Hint: check if move is valid/block is on the Board)
             current_key = self.check_key_press()
-            if current_key == pygame.K_LEFT:
-                print('Left Key pressed')
-                if self.is_block_on_valid_position(current_block, -1, 0):
-                    current_block.move_sideways(-1)
-            if current_key == pygame.K_RIGHT:
-                print('Right Key pressed')
-                if self.is_block_on_valid_position(current_block, 1, 0):
-                    current_block.move_sideways(1)
-            if current_key == pygame.K_DOWN:
-                print('Down Key pressed')
-            if current_key == pygame.K_q:
-                print('Q Key pressed')
-                current_block.left_rotation(self.block_list[current_block.name])
-            if current_key == pygame.K_e:
-                print('E Key pressed')
-                current_block.right_rotation(self.block_list[current_block.name])
             if current_key == pygame.K_p:
                 print('P Key pressed')
-                self.set_game_speed(0)
+                paused = not paused
 
-            #if self.is_block_on_valid_position(current_block, 0, self.speed/5):
-            #    current_block.move_downwards(self)
-            #else:
-            #    self.add_block_to_board(current_block)
+            if not paused:
+                if current_key == pygame.K_LEFT:
+                    print('Left Key pressed')
+                    if self.is_block_on_valid_position(current_block, -1, 0):
+                        current_block.move_sideways(-1)
 
-            #print(self.board)
+                if current_key == pygame.K_RIGHT:
+                    print('Right Key pressed')
+                    if self.is_block_on_valid_position(current_block, 1, 0):
+                        current_block.move_sideways(1)
+
+                if current_key == pygame.K_DOWN:
+                    print('Down Key pressed')
+
+                if current_key == pygame.K_q:
+                    print('Q Key pressed')
+                    current_block.left_rotation(self.block_list[current_block.name])
+
+                if current_key == pygame.K_e:
+                    print('E Key pressed')
+                    current_block.right_rotation(self.block_list[current_block.name])
+
+                if self.is_block_on_valid_position(current_block, 0, 1):
+                    current_block.move_downwards(self)
+                else:
+                    self.add_block_to_board(current_block)
+
+            print(current_block.x, current_block.y)
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -178,7 +186,7 @@ class Game(BaseGame):
 
     # set the current game speed
     def set_game_speed(self, speed):
-        # TODO set the correct game speed!
+        # DONE set the correct game speed!
         self.speed = speed
         pass
 
