@@ -56,6 +56,7 @@ class Block:
 
 class Game(BaseGame):
     def run_game(self):
+        # Maybe use self.gameboard instead and place colors on the field
         self.board = self.get_empty_board()
         fall_time = time.time()
         paused = False
@@ -109,8 +110,13 @@ class Game(BaseGame):
                     current_block.move_downwards(self)
                 else:
                     self.add_block_to_board(current_block)
+                    current_block = next_block
+                    next_block = self.get_new_block()
 
-            print(current_block.x, current_block.y)
+            for board_row in self.board:
+                print(board_row)
+
+            print('-----------------------------------------------------')
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -126,9 +132,9 @@ class Game(BaseGame):
     # Check if Coordinate given is on board (returns True/False)
     def is_coordinate_on_board(self, x, y):
         # TODO check if coordinate is on playingboard (in boundary of self.boardWidth and self.boardHeight)
-        if x < 0 or x > self.board_width:
+        if x < 0 or x > self.board_width - 1:
             return False
-        if y < 0 or y > self.board_height:
+        if y < 0 or y > self.board_height - 1:
             return False
         return True
 
@@ -136,10 +142,19 @@ class Game(BaseGame):
     # Returns True if no part of the block is outside the Board or collides with another Block
     def is_block_on_valid_position(self, block, x_change=0, y_change=0):
         # TODO check if block is on valid position after change in x or y direction
-        if block.x + x_change < 0 or block.x + block.width + x_change > self.board_width:
-            return False
-        if block.y + block.height + y_change < 0 or block.y + block.height + y_change > self.board_height:
-            return False
+        # if block.x + x_change < 0 or block.x + block.width + x_change > self.board_width:
+        #    return False
+        # if block.y + block.height + y_change < 0 or block.y + block.height + y_change > self.board_height:
+        #    return False
+
+        for shape_y_index in range(block.height):
+            if block.y + shape_y_index + y_change > self.board_height - 1:
+                return False
+
+            for shape_x_index in range(block.width):
+                if block.x + shape_x_index + x_change > self.board_width - 1 or block.x + shape_x_index + x_change < 0:
+                    return False
+
         return True
 
     # Check if the line on y Coordinate is complete
@@ -166,7 +181,10 @@ class Game(BaseGame):
         # TODO once block is not falling, place it on the gameboard
         #  add Block to the designated Location on the board once it stopped moving
         # Block zu self.board hinzufügen
-        self.board[int(block.y)][int(block.x)] = 'x'
+
+        for shape_y_index in range(block.height):
+            for shape_x_index in range(block.width):
+                self.board[block.y + shape_y_index][block.x + shape_x_index] = block.shape[shape_y_index][shape_x_index]
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
