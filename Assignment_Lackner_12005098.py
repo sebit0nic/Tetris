@@ -26,8 +26,7 @@ class Block:
             shape_column_count = 0
             self.height += 1  # DONE Calculate the correct height
             for shape_column in shape_row:
-                if shape_column == 'x':
-                    shape_column_count += 1
+                shape_column_count += 1
             if shape_column_count > self.width:
                 self.width = shape_column_count  # DONE Calculate the correct width
 
@@ -142,17 +141,12 @@ class Game(BaseGame):
     # Returns True if no part of the block is outside the Board or collides with another Block
     def is_block_on_valid_position(self, block, x_change=0, y_change=0):
         # TODO check if block is on valid position after change in x or y direction
-        # if block.x + x_change < 0 or block.x + block.width + x_change > self.board_width:
-        #    return False
-        # if block.y + block.height + y_change < 0 or block.y + block.height + y_change > self.board_height:
-        #    return False
-
-        for shape_y_index in range(block.height):
-            if block.y + shape_y_index + y_change > self.board_height - 1:
+        for shape_y_idx in range(block.height):
+            if block.y + shape_y_idx + y_change > self.board_height - 1:
                 return False
 
-            for shape_x_index in range(block.width):
-                if block.x + shape_x_index + x_change > self.board_width - 1 or block.x + shape_x_index + x_change < 0:
+            for shape_x_idx in range(block.width):
+                if block.x + shape_x_idx + x_change > self.board_width - 1 or block.x + shape_x_idx + x_change < 0:
                     return False
 
         return True
@@ -182,9 +176,10 @@ class Game(BaseGame):
         #  add Block to the designated Location on the board once it stopped moving
         # Block zu self.board hinzufügen
 
-        for shape_y_index in range(block.height):
-            for shape_x_index in range(block.width):
-                self.board[block.y + shape_y_index][block.x + shape_x_index] = block.shape[shape_y_index][shape_x_index]
+        for shape_y_idx in range(block.height):
+            for shape_x_idx in range(block.width):
+                if block.shape[shape_y_idx][shape_x_idx] == 'x':
+                    self.board[block.y + shape_y_idx][block.x + shape_x_idx] = block.shape[shape_y_idx][shape_x_idx]
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
