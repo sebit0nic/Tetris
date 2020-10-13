@@ -103,6 +103,7 @@ class Game(BaseGame):
                 current_block.move_downwards(self)
             else:
                 self.add_block_to_board(current_block)
+                self.remove_complete_line()
                 current_block = next_block
                 next_block = self.get_new_block()
 
@@ -161,19 +162,37 @@ class Game(BaseGame):
                 if block.x + shape_x_idx + x_change > self.board_width - 1 or block.x + shape_x_idx + x_change < 0:
                     return False
 
+                if block.shape[shape_y_idx][shape_x_idx] != '.':
+                    if self.gameboard[block.y + shape_y_idx + y_change][block.x + shape_x_idx + x_change] != '.':
+                        return False
+
         return True
 
     # Check if the line on y Coordinate is complete
     # Returns True if the line is complete
     def check_line_complete(self, y_coord):
-        # TODO check if line on yCoord is complete and can be removed
+        blocks_on_coord = 0
+        for board_x_idx in self.gameboard[y_coord]:
+            if board_x_idx != '.':
+                blocks_on_coord += 1
+
+        if blocks_on_coord == self.board_width:
+            return True
+
         return False
 
     # Go over all lines and remove those, which are complete
     # Returns Number of complete lines removed
     def remove_complete_line(self):
         # TODO go over all lines and check if one can be removed
-        return 0
+        total_removed_lines = 0
+        for board_y_idx in range(len(self.gameboard)):
+            if self.check_line_complete(board_y_idx):
+                total_removed_lines += 1
+                for board_x_idx in self.gameboard[board_y_idx]:
+                    board_x_idx = '.'
+
+        return total_removed_lines
 
     # Create a new random block
     # Returns the newly created Block Class
@@ -184,7 +203,7 @@ class Game(BaseGame):
         return block
 
     def add_block_to_board(self, block):
-        # TODO once block is not falling, place it on the gameboard
+        # DONE once block is not falling, place it on the gameboard
         #  add Block to the designated Location on the board once it stopped moving
         for shape_y_idx in range(block.height):
             for shape_x_idx in range(block.width):
