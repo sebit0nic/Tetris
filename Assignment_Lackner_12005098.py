@@ -36,7 +36,6 @@ class Block:
         if self.rotation > len(rotation_options) - 1:
             self.rotation = 0
         self.set_shape(rotation_options[self.rotation])
-        pass
 
     def left_rotation(self, rotation_options):
         # DONE rotate block once counter-clockwise
@@ -44,7 +43,6 @@ class Block:
         if self.rotation < 0:
             self.rotation = len(rotation_options) - 1
         self.set_shape(rotation_options[self.rotation])
-        pass
 
     def move_downwards(self, game):
         self.y += 1
@@ -55,10 +53,8 @@ class Block:
 
 class Game(BaseGame):
     def run_game(self):
-        # Maybe use self.gameboard instead and place colors on the field
-        self.board = self.get_empty_board()
+        self.gameboard = self.get_empty_board()
         fall_time = time.time()
-        paused = False
 
         current_block = self.get_new_block()
         next_block = self.get_new_block()
@@ -80,42 +76,58 @@ class Game(BaseGame):
             # TODO Game Logic: implement key events & move blocks (Hint: check if move is valid/block is on the Board)
             current_key = self.check_key_press()
             if current_key == pygame.K_p:
-                print('P Key pressed')
-                paused = not paused
+                self.show_text('Paused')
 
-            if not paused:
-                if current_key == pygame.K_LEFT:
-                    print('Left Key pressed')
-                    if self.is_block_on_valid_position(current_block, -1, 0):
-                        current_block.move_sideways(-1)
+            if current_key == pygame.K_LEFT:
+                if self.is_block_on_valid_position(current_block, -1, 0):
+                    current_block.move_sideways(-1)
 
-                if current_key == pygame.K_RIGHT:
-                    print('Right Key pressed')
-                    if self.is_block_on_valid_position(current_block, 1, 0):
-                        current_block.move_sideways(1)
+            if current_key == pygame.K_RIGHT:
+                if self.is_block_on_valid_position(current_block, 1, 0):
+                    current_block.move_sideways(1)
 
-                if current_key == pygame.K_DOWN:
-                    print('Down Key pressed')
+            if current_key == pygame.K_DOWN:
+                pass
 
-                if current_key == pygame.K_q:
-                    print('Q Key pressed')
-                    current_block.left_rotation(self.block_list[current_block.name])
-
-                if current_key == pygame.K_e:
-                    print('E Key pressed')
+            if current_key == pygame.K_q:
+                current_block.left_rotation(self.block_list[current_block.name])
+                if not self.is_block_on_valid_position(current_block):
                     current_block.right_rotation(self.block_list[current_block.name])
 
-                if self.is_block_on_valid_position(current_block, 0, 1):
-                    current_block.move_downwards(self)
-                else:
-                    self.add_block_to_board(current_block)
-                    current_block = next_block
-                    next_block = self.get_new_block()
+            if current_key == pygame.K_e:
+                current_block.right_rotation(self.block_list[current_block.name])
+                if not self.is_block_on_valid_position(current_block):
+                    current_block.left_rotation(self.block_list[current_block.name])
 
-            for board_row in self.board:
-                print(board_row)
+            if self.is_block_on_valid_position(current_block, 0, 1):
+                current_block.move_downwards(self)
+            else:
+                self.add_block_to_board(current_block)
+                current_block = next_block
+                next_block = self.get_new_block()
 
-            print('-----------------------------------------------------')
+            for board_row in self.gameboard:
+                print('')
+                for board_column in board_row:
+                    if board_column == 'red':
+                        print('R', end=' ')
+                    elif board_column == 'green':
+                        print('G', end=' ')
+                    elif board_column == 'blue':
+                        print('B', end=' ')
+                    elif board_column == 'yellow':
+                        print('Y', end=' ')
+                    elif board_column == 'orange':
+                        print('O', end=' ')
+                    elif board_column == 'purple':
+                        print('P', end=' ')
+                    elif board_column == 'lightblue':
+                        print('L', end=' ')
+                    else:
+                        print('.', end=' ')
+
+            print('')
+            print('-------------------')
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -174,12 +186,10 @@ class Game(BaseGame):
     def add_block_to_board(self, block):
         # TODO once block is not falling, place it on the gameboard
         #  add Block to the designated Location on the board once it stopped moving
-        # Block zu self.board hinzufügen
-
         for shape_y_idx in range(block.height):
             for shape_x_idx in range(block.width):
                 if block.shape[shape_y_idx][shape_x_idx] == 'x':
-                    self.board[block.y + shape_y_idx][block.x + shape_x_idx] = block.shape[shape_y_idx][shape_x_idx]
+                    self.gameboard[block.y + shape_y_idx][block.x + shape_x_idx] = block.color
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
