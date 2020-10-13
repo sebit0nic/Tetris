@@ -107,28 +107,7 @@ class Game(BaseGame):
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            for board_row in self.gameboard:
-                print('')
-                for board_column in board_row:
-                    if board_column == 'red':
-                        print('R', end=' ')
-                    elif board_column == 'green':
-                        print('G', end=' ')
-                    elif board_column == 'blue':
-                        print('B', end=' ')
-                    elif board_column == 'yellow':
-                        print('Y', end=' ')
-                    elif board_column == 'orange':
-                        print('O', end=' ')
-                    elif board_column == 'purple':
-                        print('P', end=' ')
-                    elif board_column == 'lightblue':
-                        print('L', end=' ')
-                    else:
-                        print('.', end=' ')
-
-            print('')
-            print('-------------------')
+            self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -140,6 +119,30 @@ class Game(BaseGame):
             pygame.display.update()
             self.set_game_speed(self.speed)
             self.clock.tick(self.speed)
+
+    def debug_board(self):
+        for board_row in self.gameboard:
+            print('')
+            for board_column in board_row:
+                if board_column == 'red':
+                    print('R', end=' ')
+                elif board_column == 'green':
+                    print('G', end=' ')
+                elif board_column == 'blue':
+                    print('B', end=' ')
+                elif board_column == 'yellow':
+                    print('Y', end=' ')
+                elif board_column == 'orange':
+                    print('O', end=' ')
+                elif board_column == 'purple':
+                    print('P', end=' ')
+                elif board_column == 'lightblue':
+                    print('L', end=' ')
+                else:
+                    print('.', end=' ')
+
+        print('')
+        print('-------------------')
 
     # Check if Coordinate given is on board (returns True/False)
     def is_coordinate_on_board(self, x, y):
@@ -176,6 +179,7 @@ class Game(BaseGame):
             if board_x_idx != '.':
                 blocks_on_coord += 1
 
+        # print(y_coord, ' | ', blocks_on_coord, '/', self.board_width)
         if blocks_on_coord == self.board_width:
             return True
 
@@ -189,8 +193,8 @@ class Game(BaseGame):
         for board_y_idx in range(len(self.gameboard)):
             if self.check_line_complete(board_y_idx):
                 total_removed_lines += 1
-                for board_x_idx in self.gameboard[board_y_idx]:
-                    board_x_idx = '.'
+                for board_x_idx in range(len(self.gameboard[board_y_idx])):
+                    self.gameboard[board_y_idx][board_x_idx] = '.'
 
         return total_removed_lines
 
