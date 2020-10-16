@@ -107,7 +107,7 @@ class Game(BaseGame):
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            self.debug_board()
+            # self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -179,7 +179,6 @@ class Game(BaseGame):
             if board_x_idx != '.':
                 blocks_on_coord += 1
 
-        # print(y_coord, ' | ', blocks_on_coord, '/', self.board_width)
         if blocks_on_coord == self.board_width:
             return True
 
@@ -195,6 +194,10 @@ class Game(BaseGame):
                 total_removed_lines += 1
                 for board_x_idx in range(len(self.gameboard[board_y_idx])):
                     self.gameboard[board_y_idx][board_x_idx] = '.'
+
+                # Fix bug where it just spawns a lot of tetris blocks
+                for board_row_idx in range(board_y_idx, 0, -1):
+                    self.gameboard[board_row_idx] = self.gameboard[board_row_idx-1]
 
         return total_removed_lines
 
