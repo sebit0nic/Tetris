@@ -52,6 +52,8 @@ class Block:
 
 
 class Game(BaseGame):
+    level = 0
+
     def run_game(self):
         self.gameboard = self.get_empty_board()
         fall_time = time.time()
@@ -103,16 +105,20 @@ class Game(BaseGame):
                 current_block.move_downwards(self)
             else:
                 self.add_block_to_board(current_block)
-                self.remove_complete_line()
+                removed_line_count = self.remove_complete_line()
+                if removed_line_count > 0:
+                    self.calculate_new_score(removed_line_count, self.level)
+                    self.calculate_new_level(self.score)
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            # self.debug_board()
+            self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
             self.draw_game_board()
             self.draw_score()
+            self.draw_level()
             self.draw_next_block(next_block)
             if current_block != None:
                 self.draw_block(current_block)
@@ -219,11 +225,11 @@ class Game(BaseGame):
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
-        # TODO calculate new score
+        # DONE calculate new score
         # Points gained: Points per line removed at once times the level modifier!
         # Points per lines removed corresponds to the score_directory
         # The level modifier is 1 higher than the current level.
-        pass
+        self.score += self.score_dictionary[lines_removed] * (level + 1)
 
     # calculate new Level after the score has changed
         # TODO calculate new level
@@ -231,7 +237,7 @@ class Game(BaseGame):
         # The level generally corresponds to the score divided by 300 points.
         # 300 -> level 1; 600 -> level 2; 900 -> level 3
         # TODO increase gamespeed by 1 on level up only
-        pass
+        self.level = int(self.score / 300)
 
     # set the current game speed
     def set_game_speed(self, speed):
