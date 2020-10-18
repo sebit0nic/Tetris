@@ -56,12 +56,11 @@ class Game(BaseGame):
 
     def run_game(self):
         self.gameboard = self.get_empty_board()
-        fall_time = time.time()
 
         current_block = self.get_new_block()
         next_block = self.get_new_block()
 
-        # TODO Fill in the score dictionary
+        # DONE Fill in the score dictionary
         #  Maps "lines removed" to "raw points gained"
         #  0 lines: 0 points; 1 line: 40 points; 2 lines: 100 points; 3 lines: 300 points; 4 lines: 1200 points
         self.score_dictionary = {
@@ -112,7 +111,7 @@ class Game(BaseGame):
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            self.debug_board()
+            # self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -198,8 +197,6 @@ class Game(BaseGame):
         for board_y_idx in range(len(self.gameboard)):
             if self.check_line_complete(board_y_idx):
                 total_removed_lines += 1
-                for board_x_idx in range(len(self.gameboard[board_y_idx])):
-                    self.gameboard[board_y_idx][board_x_idx] = '.'
 
                 # Fix bug where it just spawns a lot of tetris blocks
                 for board_row_idx in range(board_y_idx, 0, -1):
@@ -232,18 +229,18 @@ class Game(BaseGame):
         self.score += self.score_dictionary[lines_removed] * (level + 1)
 
     # calculate new Level after the score has changed
-        # TODO calculate new level
+        # DONE calculate new level
     def calculate_new_level(self, score):
         # The level generally corresponds to the score divided by 300 points.
         # 300 -> level 1; 600 -> level 2; 900 -> level 3
-        # TODO increase gamespeed by 1 on level up only
+        # DONE increase gamespeed by 1 on level up only
         self.level = int(self.score / 300)
+        self.speed = 5 + self.level
 
     # set the current game speed
     def set_game_speed(self, speed):
         # DONE set the correct game speed!
         self.speed = speed
-        pass
 
 # -------------------------------------------------------------------------------------
 # Do not modify the code below, your implementation should be done above
