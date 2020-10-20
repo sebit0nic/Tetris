@@ -103,7 +103,7 @@ class Game(BaseGame):
                 current_block.move_downwards(self)
             else:
                 self.add_block_to_board(current_block)
-                if current_block.y - current_block.height < 0:
+                if current_block.y - current_block.height <= 0:
                     game_over = True
                 removed_line_count = self.remove_complete_line()
                 if removed_line_count > 0:
@@ -112,7 +112,7 @@ class Game(BaseGame):
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            # self.debug_board()
+            self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -123,8 +123,7 @@ class Game(BaseGame):
             if current_block != None:
                 self.draw_block(current_block)
             if game_over:
-                pass
-                # break
+                break
             pygame.display.update()
             self.set_game_speed(self.speed)
             self.clock.tick(self.speed)
@@ -203,7 +202,8 @@ class Game(BaseGame):
                 total_removed_lines += 1
 
                 for board_row_idx in range(board_y_idx, 0, -1):
-                    self.gameboard[board_row_idx] = self.gameboard[board_row_idx-1]
+                    for board_column_idx in range(len(self.gameboard[board_row_idx])):
+                        self.gameboard[board_row_idx][board_column_idx] = self.gameboard[board_row_idx-1][board_column_idx]
 
         return total_removed_lines
 
@@ -222,7 +222,6 @@ class Game(BaseGame):
             for shape_x_idx in range(block.width):
                 if block.shape[shape_y_idx][shape_x_idx] == 'x':
                     self.gameboard[block.y + shape_y_idx][block.x + shape_x_idx] = block.color
-                    self.debug_board()
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
