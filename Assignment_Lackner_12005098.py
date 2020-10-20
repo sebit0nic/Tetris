@@ -23,10 +23,8 @@ class Block:
         self.height = 0
         self.width = 0
         for shape_row in shape:
-            shape_column_count = 0
             self.height += 1  # DONE Calculate the correct height
-            for shape_column in shape_row:
-                shape_column_count += 1
+            shape_column_count = len(shape_row)
             if shape_column_count > self.width:
                 self.width = shape_column_count  # DONE Calculate the correct width
 
@@ -53,12 +51,14 @@ class Block:
 
 class Game(BaseGame):
     level = 0
+    current_block_id = 1
 
     def run_game(self):
         self.gameboard = self.get_empty_board()
 
         current_block = self.get_new_block()
         next_block = self.get_new_block()
+        game_over = False
 
         # DONE Fill in the score dictionary
         #  Maps "lines removed" to "raw points gained"
@@ -104,6 +104,9 @@ class Game(BaseGame):
                 current_block.move_downwards(self)
             else:
                 self.add_block_to_board(current_block)
+                print('Placed block: ' + current_block.name + ', next block: ' + next_block.name)
+                if current_block.y - current_block.height < 0:
+                    game_over = True
                 removed_line_count = self.remove_complete_line()
                 if removed_line_count > 0:
                     self.calculate_new_score(removed_line_count, self.level)
@@ -111,7 +114,7 @@ class Game(BaseGame):
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            # self.debug_board()
+            self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -121,6 +124,9 @@ class Game(BaseGame):
             self.draw_next_block(next_block)
             if current_block != None:
                 self.draw_block(current_block)
+            if game_over:
+                pass
+                # break
             pygame.display.update()
             self.set_game_speed(self.speed)
             self.clock.tick(self.speed)
@@ -198,7 +204,6 @@ class Game(BaseGame):
             if self.check_line_complete(board_y_idx):
                 total_removed_lines += 1
 
-                # Fix bug where it just spawns a lot of tetris blocks
                 for board_row_idx in range(board_y_idx, 0, -1):
                     self.gameboard[board_row_idx] = self.gameboard[board_row_idx-1]
 
