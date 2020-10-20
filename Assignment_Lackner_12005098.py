@@ -51,7 +51,6 @@ class Block:
 
 class Game(BaseGame):
     level = 0
-    current_block_id = 1
 
     def run_game(self):
         self.gameboard = self.get_empty_board()
@@ -104,7 +103,6 @@ class Game(BaseGame):
                 current_block.move_downwards(self)
             else:
                 self.add_block_to_board(current_block)
-                print('Placed block: ' + current_block.name + ', next block: ' + next_block.name)
                 if current_block.y - current_block.height < 0:
                     game_over = True
                 removed_line_count = self.remove_complete_line()
@@ -114,7 +112,7 @@ class Game(BaseGame):
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            self.debug_board()
+            # self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -224,6 +222,7 @@ class Game(BaseGame):
             for shape_x_idx in range(block.width):
                 if block.shape[shape_y_idx][shape_x_idx] == 'x':
                     self.gameboard[block.y + shape_y_idx][block.x + shape_x_idx] = block.color
+                    self.debug_board()
 
     # calculate new Score after a line has been removed
     def calculate_new_score(self, lines_removed, level):
