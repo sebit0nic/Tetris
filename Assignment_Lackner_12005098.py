@@ -58,6 +58,7 @@ class Game(BaseGame):
         current_block = self.get_new_block()
         next_block = self.get_new_block()
         game_over = False
+        speed_up = False
 
         # DONE Fill in the score dictionary
         #  Maps "lines removed" to "raw points gained"
@@ -73,7 +74,7 @@ class Game(BaseGame):
         # GameLoop
         while True:
             self.test_quit_game()
-            # TODO Game Logic: implement key events & move blocks (Hint: check if move is valid/block is on the Board)
+            # DONE Game Logic: implement key events & move blocks (Hint: check if move is valid/block is on the Board)
             current_key = self.check_key_press()
             if current_key == pygame.K_p:
                 self.show_text('Paused')
@@ -87,7 +88,7 @@ class Game(BaseGame):
                     current_block.move_sideways(1)
 
             if current_key == pygame.K_DOWN:
-                pass
+                speed_up = not speed_up
 
             if current_key == pygame.K_q:
                 current_block.left_rotation(self.block_list[current_block.name])
@@ -126,7 +127,10 @@ class Game(BaseGame):
                 break
             pygame.display.update()
             self.set_game_speed(self.speed)
-            self.clock.tick(self.speed)
+            if speed_up:
+                self.clock.tick(self.speed + 2)
+            else:
+                self.clock.tick(self.speed)
 
     def debug_board(self):
         for board_row in self.gameboard:
@@ -154,7 +158,7 @@ class Game(BaseGame):
 
     # Check if Coordinate given is on board (returns True/False)
     def is_coordinate_on_board(self, x, y):
-        # TODO check if coordinate is on playingboard (in boundary of self.boardWidth and self.boardHeight)
+        # DONE check if coordinate is on playingboard (in boundary of self.boardWidth and self.boardHeight)
         if x < 0 or x > self.board_width - 1:
             return False
         if y < 0 or y > self.board_height - 1:
@@ -164,7 +168,7 @@ class Game(BaseGame):
     # Parameters block, x_change (any movement done in X direction), yChange (movement in Y direction)
     # Returns True if no part of the block is outside the Board or collides with another Block
     def is_block_on_valid_position(self, block, x_change=0, y_change=0):
-        # TODO check if block is on valid position after change in x or y direction
+        # DONE check if block is on valid position after change in x or y direction
         for shape_y_idx in range(block.height):
             if block.y + shape_y_idx + y_change > self.board_height - 1:
                 return False
@@ -195,7 +199,7 @@ class Game(BaseGame):
     # Go over all lines and remove those, which are complete
     # Returns Number of complete lines removed
     def remove_complete_line(self):
-        # TODO go over all lines and check if one can be removed
+        # DONE go over all lines and check if one can be removed
         total_removed_lines = 0
         for board_y_idx in range(len(self.gameboard)):
             if self.check_line_complete(board_y_idx):
