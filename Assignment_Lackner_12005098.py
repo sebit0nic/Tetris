@@ -106,14 +106,11 @@ class Game(BaseGame):
                 self.add_block_to_board(current_block)
                 if current_block.y - current_block.height <= 0:
                     game_over = True
-                removed_line_count = self.remove_complete_line()
-                if removed_line_count > 0:
-                    self.calculate_new_score(removed_line_count, self.level)
-                    self.calculate_new_level(self.score)
+                self.remove_complete_line()
                 current_block = next_block
                 next_block = self.get_new_block()
 
-            self.debug_board()
+            # self.debug_board()
 
             # Draw after game logic
             self.display.fill(self.background)
@@ -209,7 +206,7 @@ class Game(BaseGame):
                     for board_column_idx in range(len(self.gameboard[board_row_idx])):
                         self.gameboard[board_row_idx][board_column_idx] = self.gameboard[board_row_idx-1][board_column_idx]
 
-        return total_removed_lines
+        self.calculate_new_score(total_removed_lines, self.level)
 
     # Create a new random block
     # Returns the newly created Block Class
@@ -234,6 +231,7 @@ class Game(BaseGame):
         # Points per lines removed corresponds to the score_directory
         # The level modifier is 1 higher than the current level.
         self.score += self.score_dictionary[lines_removed] * (level + 1)
+        self.calculate_new_level(self.score)
 
     # calculate new Level after the score has changed
         # DONE calculate new level
@@ -241,7 +239,7 @@ class Game(BaseGame):
         # The level generally corresponds to the score divided by 300 points.
         # 300 -> level 1; 600 -> level 2; 900 -> level 3
         # DONE increase gamespeed by 1 on level up only
-        self.level = int(self.score / 300)
+        self.level = int(score / 300)
         self.speed = 5 + self.level
 
     # set the current game speed
